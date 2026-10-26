@@ -184,14 +184,20 @@ print("Learned Bias   :", model.linear.bias.item())
 ```
 
 ### Dataset Information
+
+
 <img width="506" height="362" alt="image" src="https://github.com/user-attachments/assets/3d52c1a1-7c8d-45cb-902b-5d5fc82ca742" />
 
 
 ### OUTPUT
 Training Loss Vs Iteration Plot
+
+
 <img width="512" height="365" alt="image" src="https://github.com/user-attachments/assets/7ab9cd04-a39a-4c2e-b2be-0acaec155787" />
 
 Best Fit line plot
+
+
 <img width="506" height="365" alt="image" src="https://github.com/user-attachments/assets/59d86302-a195-4a28-ab77-8b0c7a6abad3" />
 
 ### New Sample Data Prediction
