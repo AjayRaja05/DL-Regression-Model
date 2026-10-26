@@ -45,27 +45,161 @@ Use the trained model to predict  for a new input value .
 ### Register Number:
 
 ```python
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import numpy as np
+import matplotlib.pyplot as plt
+
+# -------------------------------
+# STEP 1 : Generate Dataset
+# -------------------------------
+
+np.random.seed(42)
+torch.manual_seed(42)
+
+x = np.arange(1, 51)
+noise = np.random.randn(50) * 5
+y = 3 * x + 10 + noise
+
+# Convert to tensors
+x_train = torch.tensor(x, dtype=torch.float32).view(-1, 1)
+y_train = torch.tensor(y, dtype=torch.float32).view(-1, 1)
+
+# -------------------------------
+# Display Dataset
+# -------------------------------
+
+print("Generated Dataset")
+print("-------------------------------")
+print(" X\tY")
+
+for i in range(len(x)):
+    print(f"{x[i]}\t{y[i]:.2f}")
+
+plt.figure(figsize=(6,4))
+plt.scatter(x, y, color="blue")
+plt.title("Generated Dataset")
+plt.xlabel("Input")
+plt.ylabel("Output")
+plt.grid(True)
+plt.show()
+
+# -------------------------------
+# STEP 2 : Define Neural Network
+# -------------------------------
+
 class Model(nn.Module):
     def __init__(self, in_features, out_features):
         super().__init__()
-        #Include your code here
+        self.linear = nn.Linear(in_features, out_features)
 
+    def forward(self, x):
+        return self.linear(x)
 
+# -------------------------------
+# STEP 3 : Initialize Model
+# -------------------------------
 
-# Initialize the Model, Loss Function, and Optimizer
+model = Model(1, 1)
+
+criterion = nn.MSELoss()
+
+optimizer = optim.SGD(model.parameters(), lr=0.001)
+
+# -------------------------------
+# STEP 4 : Train Model
+# -------------------------------
+
+epochs = 100
+
+losses = []
+
+for epoch in range(epochs):
+
+    prediction = model(x_train)
+
+    loss = criterion(prediction, y_train)
+
+    optimizer.zero_grad()
+
+    loss.backward()
+
+    optimizer.step()
+
+    losses.append(loss.item())
+
+    if (epoch + 1) % 10 == 0:
+        print(f"Epoch {epoch+1:3d}  Loss = {loss.item():.4f}")
+
+# -------------------------------
+# STEP 5 : Plot Loss Curve
+# -------------------------------
+
+plt.figure(figsize=(6,4))
+plt.plot(losses, color="red")
+plt.title("Training Loss Vs Iteration")
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.grid(True)
+plt.show()
+
+# -------------------------------
+# STEP 6 : Best Fit Line
+# -------------------------------
+
+predicted = model(x_train).detach().numpy()
+
+plt.figure(figsize=(6,4))
+plt.scatter(x, y, label="Actual Data")
+plt.plot(x, predicted, color="red", linewidth=2, label="Best Fit Line")
+plt.title("Best Fit Line")
+plt.xlabel("Input")
+plt.ylabel("Output")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# -------------------------------
+# STEP 7 : Predict New Sample
+# -------------------------------
+
+sample = torch.tensor([[60.0]])
+
+prediction = model(sample)
+
+print("\n-------------------------------")
+print("New Sample Prediction")
+print("-------------------------------")
+print("Input :", sample.item())
+print("Predicted Output :", prediction.item())
+
+# -------------------------------
+# Final Learned Parameters
+# -------------------------------
+
+print("\nLearned Weight :", model.linear.weight.item())
+print("Learned Bias   :", model.linear.bias.item())
 
 ```
 
 ### Dataset Information
-Include screenshot of the generated data
+<img width="506" height="362" alt="image" src="https://github.com/user-attachments/assets/3d52c1a1-7c8d-45cb-902b-5d5fc82ca742" />
+
 
 ### OUTPUT
 Training Loss Vs Iteration Plot
+<img width="512" height="365" alt="image" src="https://github.com/user-attachments/assets/7ab9cd04-a39a-4c2e-b2be-0acaec155787" />
+
 Best Fit line plot
-Include your plot here
+<img width="506" height="365" alt="image" src="https://github.com/user-attachments/assets/59d86302-a195-4a28-ab77-8b0c7a6abad3" />
 
 ### New Sample Data Prediction
-Include your sample input and output here
+Input : 60.0
+Predicted Output : 193.8988037109375
+
+Learned Weight : 3.2091197967529297
+Learned Bias   : 1.3516194820404053
 
 ## RESULT
 Thus, a neural network regression model was successfully developed and trained using PyTorch.
